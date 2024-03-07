@@ -28,7 +28,12 @@ def get_uploaded_images():
 def get_image(filename):
     return send_from_directory(os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER']), filename)
 
-
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.', 'success')
+    return redirect(url_for('home'))
 
 @app.route('/files')
 @login_required
