@@ -6,11 +6,37 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
 from app.models import UserProfile
 from app.forms import LoginForm
+from flask import send_from_directory
 
+
+def get_uploaded_images():
+    rootdir = os.getcwd()
+    upload_folder = os.path.join(rootdir, 'uploads')
+    images = []
+    for subdir, dirs, files in os.walk(upload_folder):
+        for file in files:
+            images.append(file)
+    return images
 
 ###
 # Routing for your application.
 ###
+
+
+
+@app.route('/uploads/<filename>')
+def get_image(filename):
+    return send_from_directory(os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER']), filename)
+
+
+
+@app.route('/files')
+@login_required
+def files():
+    images = get_uploaded_images()
+    return render_template('files.html', images=images)
+
+
 
 @app.route('/')
 def home():
